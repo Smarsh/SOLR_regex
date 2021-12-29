@@ -28,7 +28,10 @@ ssh -n -T nd-91005.smarshinc.com "sudo /bin/bash /nfs/home/mholzinger/update_sol
 Command arguments:
 
 update_solr_instance_collect_hierarchy.sh
--c <collection>
--m <define master server>
--d <dead master server to replace>
--k <keepalive=TRUE>  (optional argument to prevent from restarting solr instance after updating config)
+
+```
+  -c <collection>
+  -m <define master server>
+  -d <dead master server to replace>
+  -k <keepalive=TRUE>  (optional argument to prevent from restarting solr instance after updating config)
+```

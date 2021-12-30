@@ -68,6 +68,7 @@ grep -H MASTER /var/solr/instance-[1-99]/"${izz}"_hierarchy/core.properties |\
         sudo /sbin/service $restart_instance restart
       else
         echo "[$restart_instance] not restarted. Keepalive is set"
+      fi
     done
 
 echo "Collection: ${izz}"

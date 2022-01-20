@@ -8,8 +8,8 @@ else
   hostlist="$1"
 fi
 
-sorted_hosts=$(mktemp -t hosts_sorted)
-sorted_collections=$(mktemp -t collections_sorted)
+sorted_hosts=$(mktemp -t hosts_sorted.XXX)
+sorted_collections=$(mktemp -t collections_sorted.XXX)
 
 cat "$hostlist" | sed -e 's@http://@@g' |cut -d ':' -f 1|sort -u > "$sorted_hosts"
 

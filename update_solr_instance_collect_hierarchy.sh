@@ -3,7 +3,7 @@
 #Set default keepalive status (false to enable restart)
 keepalive=FALSE
 
-while getopts ":c:p:m:k:" o; do
+while getopts ":c:p:i:k:m:" o; do
     case "${o}" in
         c)
             izz=${OPTARG}
@@ -16,6 +16,9 @@ while getopts ":c:p:m:k:" o; do
             ;;
 	k)
             keepalive=${OPTARG}
+            ;;
+        i)
+            target_instance=${OPTARG}
             ;;
 	*)
             usage
@@ -33,13 +36,14 @@ echo "Collection = ${izz}"
 echo "Master = ${primary_server}"
 echo "Port = ${port}"
 echo "Keepalive (no restart) = ${keepalive}"
+echo "Target Instance = ${target_instance}"
 
 # Show current config for Collection
 echo "Current config file:"
-grep -H MASTER_CORE_URL /var/solr/instance-[1-99]/"${izz}"_hierarchy/core.properties
+grep -H MASTER_CORE_URL /var/solr/instance-[${target_instance}]/"${izz}"_hierarchy/core.properties
 
 containing_folders=($(grep -H MASTER_CORE_URL \
-  /var/solr/instance-[1-99]/"${izz}"_hierarchy/core.properties |\
+  /var/solr/instance-[${target_instance}]/"${izz}"_hierarchy/core.properties |\
   cut -d  ':'  -f 1 |\
   xargs -L 1 dirname))
 
@@ -57,13 +61,13 @@ do
 done
 
 echo "Changed files:"
-grep -H MASTER_CORE_URL /var/solr/instance-[1-99]/"${izz}"_hierarchy/core.properties
+grep -H MASTER_CORE_URL /var/solr/instance-[${target_instance}]/"${izz}"_hierarchy/core.properties
 
 # restart affected hierarchy instances
 service_list=$(mktemp)
 
-grep -H MASTER_CORE_URL /var/solr/instance-[1-99]/"${izz}"_hierarchy/core.properties |\
-  grep -E -o 'instance-[1-99]'|\
+grep -H MASTER_CORE_URL /var/solr/instance-[${target_instance}]/"${izz}"_hierarchy/core.properties |\
+  grep -E -o 'instance-['"${target_instance}"']'|\
   sed 's/instance-/solr-0/g'|\
     while read -r restart_instance
     do
@@ -77,7 +81,7 @@ grep -H MASTER_CORE_URL /var/solr/instance-[1-99]/"${izz}"_hierarchy/core.proper
 
 echo "Collection: ${izz}"
 echo "Changed files:"
-grep -H MASTER_CORE_URL /var/solr/instance-[1-99]/"${izz}"_hierarchy/core.properties
+grep -H MASTER_CORE_URL /var/solr/instance-[${target_instance}]/"${izz}"_hierarchy/core.properties
 echo "hostname: " `hostname`
 cat "$service_list"
 

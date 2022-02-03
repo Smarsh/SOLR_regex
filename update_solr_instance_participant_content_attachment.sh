@@ -57,12 +57,12 @@ do
 done
 
 echo "Changed files:"
-grep -H MASTER_CORE_URL /var/solr/instance-[1-99]/"${izz}"_hierarchy/core.properties
+grep -H MASTER_CORE_URL /var/solr/instance-[1-99]/"${izz}"_{content,attachments,participants}/core.properties
 
 # restart affected hierarchy instances
 service_list=$(mktemp)
 
-grep -H MASTER_CORE_URL /var/solr/instance-[1-99]/"${izz}"_hierarchy/core.properties |\
+grep -H MASTER_CORE_URL /var/solr/instance-[1-99]/"${izz}"_{content,attachments,participants}/core.properties |\
   grep -E -o 'instance-[1-99]'|\
   sed 's/instance-/solr-0/g'|\
     while read -r restart_instance
@@ -77,7 +77,7 @@ grep -H MASTER_CORE_URL /var/solr/instance-[1-99]/"${izz}"_hierarchy/core.proper
 
 echo "Collection: ${izz}"
 echo "Changed files:"
-grep -H MASTER_CORE_URL /var/solr/instance-[1-99]/"${izz}"_hierarchy/core.properties
+grep -H MASTER_CORE_URL /var/solr/instance-[1-99]/"${izz}"_{content,attachments,participants}/core.properties
 echo "hostname: " `hostname`
 cat "$service_list"
 

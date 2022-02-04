@@ -3,10 +3,16 @@
 #Set default keepalive status (false to enable restart)
 keepalive=FALSE
 
-while getopts ":c:p:m:k:" o; do
+while getopts ":c:i:g:p:m:k:" o; do
     case "${o}" in
         c)
             izz=${OPTARG}
+            ;;
+        i)
+            target_instance=${OPTARG}
+            ;;
+        g)
+            target_group=${OPTARG}
             ;;
         p)
             port=${OPTARG}
@@ -33,13 +39,15 @@ echo "Collection = ${izz}"
 echo "Master = ${primary_server}"
 echo "Port = ${port}"
 echo "Keepalive (no restart) = ${keepalive}"
+echo "Target Instance = ${target_instance}"
+echo "Target Group = ${target_group}"
 
 # Show current config for Collection
 echo "Current config file:"
-grep -H MASTER_CORE_URL /var/solr/instance-[1-99]/"${izz}"_{content,attachments,participants}/core.properties
+grep -H MASTER_CORE_URL /var/solr/instance-[${target_instance}]/"${izz}"_${target_group}/core.properties
 
 containing_folders=($(grep -H MASTER_CORE_URL \
-  /var/solr/instance-[1-99]/"${izz}"_{content,attachments,participants}/core.properties |\
+  /var/solr/instance-[${target_instance}]/"${izz}"_${target_group}/core.properties |\
   cut -d  ':'  -f 1 |\
   xargs -L 1 dirname))
 
@@ -57,12 +65,12 @@ do
 done
 
 echo "Changed files:"
-grep -H MASTER_CORE_URL /var/solr/instance-[1-99]/"${izz}"_{content,attachments,participants}/core.properties
+grep -H MASTER_CORE_URL /var/solr/instance-[${target_instance}]/"${izz}"_${target_group}/core.properties
 
 # restart affected hierarchy instances
 service_list=$(mktemp)
 
-grep -H MASTER_CORE_URL /var/solr/instance-[1-99]/"${izz}"_{content,attachments,participants}/core.properties |\
+grep -H MASTER_CORE_URL /var/solr/instance-[${target_instance}]/"${izz}"_${target_group}/core.properties |\
   grep -E -o 'instance-[1-99]'|\
   sed 's/instance-/solr-0/g'|\
     while read -r restart_instance

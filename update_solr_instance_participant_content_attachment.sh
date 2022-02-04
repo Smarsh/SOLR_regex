@@ -85,7 +85,7 @@ grep -H MASTER_CORE_URL /var/solr/instance-[${target_instance}]/"${izz}"_${targe
 
 echo "Collection: ${izz}"
 echo "Changed files:"
-grep -H MASTER_CORE_URL /var/solr/instance-[1-99]/"${izz}"_{content,attachments,participants}/core.properties
+grep -H MASTER_CORE_URL /var/solr/instance-[${target_instance}]/"${izz}"_${target_group}/core.properties
 echo "hostname: " `hostname`
 cat "$service_list"
 
